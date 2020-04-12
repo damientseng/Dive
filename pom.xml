@@ -10,7 +10,7 @@
 
     <properties>
         <hadoop.version>2.6.0</hadoop.version>
-        <hive.version>1.2.2</hive.version>
+        <hive.version>2.3.4</hive.version>
     </properties>
 
     <name>sak</name>
