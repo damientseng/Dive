@@ -1,8 +1,5 @@
 package com.damientseng.sak.hive.ql.udf;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
 import org.apache.hadoop.hive.ql.exec.UDFArgumentTypeException;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
@@ -10,6 +7,9 @@ import org.apache.hadoop.hive.ql.udf.generic.GenericUDAFEvaluator;
 import org.apache.hadoop.hive.serde2.objectinspector.*;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 
 
 public class GenericUDAFCompareWhenEvaluator extends GenericUDAFEvaluator
@@ -114,7 +114,15 @@ public class GenericUDAFCompareWhenEvaluator extends GenericUDAFEvaluator
         if (parameters[0] == null || parameters[1] == null) {
             return;
         }
-        doCompare(agg, cmpOutputOI, parameters[0], cmpInputOI, parameters[1], resInputOI);
+
+        WhenAgg myagg = (WhenAgg) agg;
+        int r = this.sign * ObjectInspectorUtils.compare(myagg.cmp, cmpOutputOI, parameters[0], cmpInputOI);
+        if (myagg.cmp == null || r < 0) {
+            myagg.cmp = ObjectInspectorUtils.copyToStandardObject(parameters[0], cmpInputOI,
+                    ObjectInspectorUtils.ObjectInspectorCopyOption.JAVA);
+            myagg.res = ObjectInspectorUtils.copyToStandardObject(parameters[1], resInputOI,
+                    ObjectInspectorUtils.ObjectInspectorCopyOption.JAVA);
+        }
     }
 
     @Override
@@ -129,9 +137,13 @@ public class GenericUDAFCompareWhenEvaluator extends GenericUDAFEvaluator
     public void merge(AggregationBuffer agg, Object partial)
             throws HiveException {
         if (partial != null) {
-            doCompare(agg, cmpOutputOI,
-                    soi.getStructFieldData(partial, cmpField), cmpOutputOI,
-                    soi.getStructFieldData(partial, resField), resOutputOI);
+            WhenAgg myagg = (WhenAgg) agg;
+            Object partCmp = soi.getStructFieldData(partial, cmpField);
+            int r = this.sign * ObjectInspectorUtils.compare(myagg.cmp, cmpOutputOI, partCmp, cmpOutputOI);
+            if (myagg.cmp == null || r < 0) {
+                myagg.cmp = partCmp;
+                myagg.res = soi.getStructFieldData(partial, resField);
+            }
         }
     }
 
@@ -140,19 +152,4 @@ public class GenericUDAFCompareWhenEvaluator extends GenericUDAFEvaluator
         WhenAgg myagg = (WhenAgg) agg;
         return myagg.res;
     }
-
-    private void doCompare(AggregationBuffer agg,
-                           ObjectInspector aggCmpOI,
-                           Object partCmp, ObjectInspector partCmpOI,
-                           Object partRes, ObjectInspector partResIO) {
-        WhenAgg myagg = (WhenAgg) agg;
-        int r = this.sign * ObjectInspectorUtils.compare(myagg.cmp, aggCmpOI, partCmp, partCmpOI);
-        if (myagg.cmp == null || r < 0) {
-            myagg.cmp = ObjectInspectorUtils.copyToStandardObject(partCmp, partCmpOI,
-                    ObjectInspectorUtils.ObjectInspectorCopyOption.JAVA);
-            myagg.res = ObjectInspectorUtils.copyToStandardObject(partRes, partResIO,
-                    ObjectInspectorUtils.ObjectInspectorCopyOption.JAVA);
-        }
-    }
-
 }
