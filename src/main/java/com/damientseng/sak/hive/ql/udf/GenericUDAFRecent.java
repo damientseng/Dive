@@ -7,8 +7,11 @@ import org.apache.hadoop.hive.ql.exec.UDFArgumentTypeException;
 import org.apache.hadoop.hive.ql.exec.WindowFunctionDescription;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
+import org.apache.hadoop.hive.ql.plan.ptf.WindowFrameDef;
 import org.apache.hadoop.hive.ql.udf.generic.AbstractGenericUDAFResolver;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDAFEvaluator;
+import org.apache.hadoop.hive.ql.udf.generic.GenericUDAFEvaluator.AggregationBuffer;
+import org.apache.hadoop.hive.ql.udf.generic.ISupportStreamingModeForWindowing;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorUtils;
@@ -49,10 +52,53 @@ public class GenericUDAFRecent extends AbstractGenericUDAFResolver {
         return new GenericUDAFRecentEvaluator();
     }
 
-    public static class GenericUDAFRecentEvaluator extends GenericUDAFEvaluator {
+    static class RctAgg implements AggregationBuffer {
+        ArrayList<Object> srcs;
+        Object currSrc;
+        ObjectInspector srcOI;
+        boolean supportsStreaming;
+
+        RctAgg(ObjectInspector srcOI, boolean supportsStreaming) {
+            this.srcOI = srcOI;
+            this.supportsStreaming = supportsStreaming;
+            init();
+        }
+
+        void init() {
+            srcs = new ArrayList<Object>();
+            currSrc = null;
+            if (supportsStreaming) {
+                srcs.add(null);
+            }
+        }
+
+        void add() {
+            if (supportsStreaming) {
+                srcs.set(0, ObjectInspectorUtils.copyToStandardObject(currSrc, srcOI,
+                        ObjectInspectorUtils.ObjectInspectorCopyOption.DEFAULT));
+
+            } else {
+                srcs.add(ObjectInspectorUtils.copyToStandardObject(currSrc, srcOI,
+                        ObjectInspectorUtils.ObjectInspectorCopyOption.DEFAULT));
+            }
+
+        }
+
+        void update(Object src) {
+            this.currSrc = src;
+        }
+    }
+
+    public static class GenericUDAFAbstractRecentEvaluator extends GenericUDAFEvaluator {
 
         PrimitiveObjectInspector flgInputOI;
         ObjectInspector srcInputOI;
+
+        boolean isStreamingMode = false;
+
+        protected boolean isStreaming() {
+            return isStreamingMode;
+        }
 
         @Override
         public ObjectInspector init(Mode m, ObjectInspector[] parameters) throws HiveException {
@@ -68,7 +114,7 @@ public class GenericUDAFRecent extends AbstractGenericUDAFResolver {
         }
 
         public AggregationBuffer getNewAggregationBuffer() throws HiveException {
-            return new RctAgg(srcInputOI);
+            return new RctAgg(srcInputOI, isStreamingMode);
         }
 
         public void reset(AggregationBuffer agg) throws HiveException {
@@ -79,13 +125,14 @@ public class GenericUDAFRecent extends AbstractGenericUDAFResolver {
             assert (parameters.length == 2);
             RctAgg myagg = (RctAgg) agg;
             int flg = PrimitiveObjectInspectorUtils.getInt(parameters[0], flgInputOI);
+
             if (flg == 0) {
                 // if record is from anchor table
                 myagg.add();
             } else if (flg == 1) {
-                // if from look table, update current src and add default value
+                // if from look table, update current src and then add
                 myagg.update(parameters[1]);
-                myagg.addDefault();
+                myagg.add();
             } else {
                 throw new HiveException("unknown flag: " + flg + " must be 0 or 1");
             }
@@ -104,33 +151,30 @@ public class GenericUDAFRecent extends AbstractGenericUDAFResolver {
             return ((RctAgg) agg).srcs;
         }
 
-        static class RctAgg extends AbstractAggregationBuffer {
-            ArrayList<Object> srcs;
-            Object currSrc;
-            ObjectInspector srcOI;
+    }
 
-            RctAgg(ObjectInspector srcOI) {
-                init();
-                this.srcOI = srcOI;
-            }
+    public static class GenericUDAFRecentEvaluator extends GenericUDAFAbstractRecentEvaluator
+            implements ISupportStreamingModeForWindowing {
 
-            void init() {
-                srcs = new ArrayList<Object>();
-                currSrc = null;
+        public Object getNextResult(AggregationBuffer agg) throws HiveException {
+            RctAgg bf = (RctAgg) agg;
+            if (!bf.srcs.isEmpty()) {
+                Object res = bf.srcs.get(0);
+                if (res == null) {
+                    return ISupportStreamingModeForWindowing.NULL_RESULT;
+                }
+                return res;
             }
+            return null;
+        }
 
-            void add() {
-                srcs.add(ObjectInspectorUtils.copyToStandardObject(currSrc, srcOI,
-                        ObjectInspectorUtils.ObjectInspectorCopyOption.DEFAULT));
-            }
+        public GenericUDAFEvaluator getWindowingEvaluator(WindowFrameDef wFrmDef) {
+            isStreamingMode = true;
+            return this;
+        }
 
-            void addDefault() {
-                srcs.add(null);
-            }
-
-            void update(Object src) {
-                this.currSrc = src;
-            }
+        public int getRowsRemainingAfterTerminate() throws HiveException {
+            return 0;
         }
     }
 
