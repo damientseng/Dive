@@ -80,27 +80,12 @@ public class GenericUDAFRecentTest extends TestCase {
 
             fn.aggregate(agg, in);
             Object out = oS.getNextResult(agg);
-            if (out != null) {
-                if (out == ISupportStreamingModeForWindowing.NULL_RESULT) {
-                    out = null;
-                }
-                assertEquals(out, outVals.next());
-                outSz++;
-            }
-        }
-
-        fn.terminate(agg);
-
-        while (outSz < inSz) {
-            Object out = oS.getNextResult(agg);
-            if (out == ISupportStreamingModeForWindowing.NULL_RESULT) {
-                out = null;
-            }
-
             assertEquals(out, outVals.next());
             outSz++;
         }
 
+        fn.terminate(agg);
+        assertEquals(outSz, inSz);
     }
 
 }

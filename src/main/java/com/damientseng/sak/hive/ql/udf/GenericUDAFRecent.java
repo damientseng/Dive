@@ -157,15 +157,7 @@ public class GenericUDAFRecent extends AbstractGenericUDAFResolver {
             implements ISupportStreamingModeForWindowing {
 
         public Object getNextResult(AggregationBuffer agg) throws HiveException {
-            RctAgg bf = (RctAgg) agg;
-            if (!bf.srcs.isEmpty()) {
-                Object res = bf.srcs.get(0);
-                if (res == null) {
-                    return ISupportStreamingModeForWindowing.NULL_RESULT;
-                }
-                return res;
-            }
-            return null;
+            return ((RctAgg) agg).srcs.get(0);
         }
 
         public GenericUDAFEvaluator getWindowingEvaluator(WindowFrameDef wFrmDef) {
