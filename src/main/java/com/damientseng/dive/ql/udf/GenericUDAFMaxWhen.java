@@ -1,4 +1,4 @@
-package com.damientseng.sak.hive.ql.udf;
+package com.damientseng.dive.ql.udf;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

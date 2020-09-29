@@ -1,7 +1,9 @@
-package com.damientseng.sak.hive.ql.udf;
+package com.damientseng.dive.ql.udf;
 
 import junit.framework.TestCase;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
+import org.apache.hadoop.hive.ql.parse.WindowingSpec;
+import org.apache.hadoop.hive.ql.plan.ptf.BoundaryDef;
 import org.apache.hadoop.hive.ql.plan.ptf.WindowFrameDef;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDAFEvaluator;
 import org.apache.hadoop.hive.ql.udf.generic.ISupportStreamingModeForWindowing;
@@ -67,7 +69,10 @@ public class GenericUDAFRecentTest extends TestCase {
         GenericUDAFRecent fnR = new GenericUDAFRecent();
         GenericUDAFEvaluator fn = fnR.getEvaluator(inputTypes);
         fn.init(GenericUDAFEvaluator.Mode.COMPLETE, inputOIs);
-        fn = fn.getWindowingEvaluator(new WindowFrameDef());
+        fn = fn.getWindowingEvaluator(new WindowFrameDef(
+                WindowingSpec.WindowType.ROWS,
+                new BoundaryDef(WindowingSpec.Direction.PRECEDING, WindowingSpec.BoundarySpec.UNBOUNDED_AMOUNT),
+                new BoundaryDef(WindowingSpec.Direction.CURRENT, 0)));
 
         GenericUDAFEvaluator.AggregationBuffer agg = fn.getNewAggregationBuffer();
 

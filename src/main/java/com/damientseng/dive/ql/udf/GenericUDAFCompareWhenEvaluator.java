@@ -1,4 +1,4 @@
-package com.damientseng.sak.hive.ql.udf;
+package com.damientseng.dive.ql.udf;
 
 import org.apache.hadoop.hive.ql.exec.UDFArgumentTypeException;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
