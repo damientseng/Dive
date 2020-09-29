@@ -1,6 +1,7 @@
 # Dive
+[![Build Status](https://travis-ci.com/damientseng/Dive.svg?branch=master)](https://travis-ci.com/damientseng/Dive)
 
-A Collection of Fantastic Hive UDFs.
+A Collection of Useful Hive UDFs.
 
 ## UDAF
 ### MaxWhen
