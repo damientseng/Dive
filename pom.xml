@@ -13,7 +13,7 @@
         <hive.version>2.3.4</hive.version>
     </properties>
 
-    <name>sak</name>
+    <name>Dive</name>
     <url>https://damientseng.com/</url>
 
     <dependencies>
