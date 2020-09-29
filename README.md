@@ -4,7 +4,7 @@ A Collection of Fantastic Hive UDFs.
 
 ## UDAF
 ### MaxWhen
-**Signature: **`maxwhen(cmp, val)`
+**Signature**: `maxwhen(cmp, val)`
 
 **Description**: returns column `val`'s value from the row where `cmp` has the maximum value. It has an antonym `minwhen`. 
 
@@ -19,7 +19,7 @@ group by uid
 
 ### Recent 
 
-**Signature: **`recent(flg, ch)`
+**Signature**: `recent(flg, ch)`
 
 **Description**: a user-defined *Analytics* function that combines records without explicit joins. Check out this [post](https://damientseng.com/big-data/2020/04/27/hive-the-udaf-youve-never-seen.html) for more details.
 
