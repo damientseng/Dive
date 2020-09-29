@@ -1,14 +1,22 @@
-A collection of UDFs for Hive.
+# Dive
 
-### MAXWHEN/MINWHEN
-A UDAF. Use `maxwhen(a, b)` to get column `b`'s value from the row where `a` has a maximum value.
+A Collection of Fantastic Hive UDFs.
+
+## UDAF
+### MaxWhen
+**Signature: **`maxwhen(cmp, val)`
+
+**Description**: Returns column `val`'s value from the row where `cmp` has the maximum value. It has an antonym `minwhen`. 
+
+**Example**: For each `uid`, get the latest `ip` .
 
 ```sql
-select
-  uid
-  ,count(1)        as pv
-  ,minwhen(dt, ip) as first_ip
-  ,maxwhen(dt, ip) as final_ip
+select 
+    uid, maxwhen(dt, ip) as final_ip
 from mydb.mytb
 group by uid
 ```
+
+## License
+
+MIT © Damien Tseng
