@@ -1,5 +1,6 @@
 # Dive
 [![Build Status](https://travis-ci.com/damientseng/Dive.svg?branch=master)](https://travis-ci.com/damientseng/Dive)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9b6330a7d9ff3a536546/maintainability)](https://codeclimate.com/github/damientseng/Dive/maintainability)
 
 A Collection of Useful Hive UDFs.
 
