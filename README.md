@@ -6,7 +6,7 @@ A Collection of Fantastic Hive UDFs.
 ### MaxWhen
 **Signature: **`maxwhen(cmp, val)`
 
-**Description**: Returns column `val`'s value from the row where `cmp` has the maximum value. It has an antonym `minwhen`. 
+**Description**: returns column `val`'s value from the row where `cmp` has the maximum value. It has an antonym `minwhen`. 
 
 **Example**: For each `uid`, get the latest `ip` .
 
@@ -16,6 +16,12 @@ select
 from mydb.mytb
 group by uid
 ```
+
+### Recent 
+
+**Signature: **`recent(flg, ch)`
+
+**Description**: a user-defined *Analytics* function that combines records without explicit joins. Check out this [post](https://damientseng.com/big-data/2020/04/27/hive-the-udaf-youve-never-seen.html) for more details.
 
 ## License
 
