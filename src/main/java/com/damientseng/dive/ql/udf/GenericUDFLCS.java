@@ -19,7 +19,7 @@ import static org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveO
  * GenericUDFLCS
  */
 @Description(name = "lcs", value = "_FUNC_(str1, str2) - "
-        + "Calculate the longest common sub-sequence of str1 and str2"
+        + "Calculate the size of the longest common sub-sequence of str1 and str2"
         + "Example:\n "
         + " > SELECT _FUNC_('abcde', 'aced');\n 3")
 public class GenericUDFLCS extends GenericUDF {
