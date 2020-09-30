@@ -1,6 +1,7 @@
 # Dive
 ![GitHub](https://img.shields.io/github/license/damientseng/Dive)
 [![Build Status](https://travis-ci.com/damientseng/Dive.svg?branch=master)](https://travis-ci.com/damientseng/Dive)
+[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/damientseng/Dive.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/damientseng/Dive/context:java)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9b6330a7d9ff3a536546/maintainability)](https://codeclimate.com/github/damientseng/Dive/maintainability)
 
 A Collection of Useful Hive UDFs.
