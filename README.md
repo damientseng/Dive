@@ -24,7 +24,3 @@ group by uid
 **Signature**: `recent(flg, ch)`
 
 **Description**: a user-defined *Analytics* function that combines records without explicit joins. Check out this [post](https://damientseng.com/big-data/2020/04/27/hive-the-udaf-youve-never-seen.html) for more details.
-
-## License
-
-MIT © Damien Tseng
