@@ -8,7 +8,7 @@ A Collection of Useful Hive UDFs.
 
 ## UDAF
 ### MaxWhen
-**Implementation **: `com.damientseng.dive.ql.udf.GenericUDAFMaxWhen`
+**Implementation**: `com.damientseng.dive.ql.udf.GenericUDAFMaxWhen`
 
 **Signature**: `maxwhen(cmp, val)`
 
@@ -25,7 +25,7 @@ group by uid
 
 ### Recent 
 
-**Implementation **: `com.damientseng.dive.ql.udf.GenericUDAFRecent`
+**Implementation**: `com.damientseng.dive.ql.udf.GenericUDAFRecent`
 
 **Signature**: `recent(flg, ch)`
 
@@ -35,7 +35,7 @@ group by uid
 
 ### LCS
 
-**Implementation **: `com.damientseng.dive.ql.udf.GenericUDFLCS`
+**Implementation**: `com.damientseng.dive.ql.udf.GenericUDFLCS`
 
 **Signature**: `lcs(str1, str2)`
 
