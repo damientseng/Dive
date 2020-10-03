@@ -48,3 +48,23 @@ select lcs('abcde', 'aced');
 >> 3
 ```
 
+## UDTF 
+
+### DUP
+
+**Implementation**: `com.damientseng.dive.ql.udf.GenericUDTFDuplicate`
+
+**Signature**: `dup(c, col1, col2,...)`
+
+**Description**: a UDTF that makes `c` copies of each row, with the specified columns.
+
+**Example**:
+
+```sql
+select dup(2, name, age) from customers;
+Jack  37
+Jack  37
+Pony  35
+Pony  35
+```
+
