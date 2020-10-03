@@ -12,13 +12,13 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 @Description(name = "minwhen", value = "_FUNC_(cmp, res) - Returns res from the row with the minimum value of cmp")
 public class GenericUDAFMinWhen extends AbstractGenericUDAFResolver {
 
-    static final Log LOG = LogFactory.getLog(GenericUDAFMinWhen.class.getName());
+  static final Log LOG = LogFactory.getLog(GenericUDAFMinWhen.class.getName());
 
-    @Override
-    public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters)
-            throws SemanticException {
-        GenericUDAFCompareWhenEvaluator.paramCheck(parameters);
-        return new GenericUDAFCompareWhenEvaluator(GenericUDAFCompareWhenEvaluator.Order.MIN);
-    }
+  @Override
+  public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters)
+      throws SemanticException {
+    GenericUDAFCompareWhenEvaluator.paramCheck(parameters);
+    return new GenericUDAFCompareWhenEvaluator(GenericUDAFCompareWhenEvaluator.Order.MIN);
+  }
 
 }

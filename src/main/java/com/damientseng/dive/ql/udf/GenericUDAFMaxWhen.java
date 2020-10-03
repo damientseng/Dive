@@ -12,13 +12,13 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 @Description(name = "maxwhen", value = "_FUNC_(cmp, res) - Returns res from the row with the maximum value of cmp")
 public class GenericUDAFMaxWhen extends AbstractGenericUDAFResolver {
 
-    static final Log LOG = LogFactory.getLog(GenericUDAFMaxWhen.class.getName());
+  static final Log LOG = LogFactory.getLog(GenericUDAFMaxWhen.class.getName());
 
-    @Override
-    public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters)
-            throws SemanticException {
-        GenericUDAFCompareWhenEvaluator.paramCheck(parameters);
-        return new GenericUDAFCompareWhenEvaluator(GenericUDAFCompareWhenEvaluator.Order.MAX);
-    }
+  @Override
+  public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters)
+      throws SemanticException {
+    GenericUDAFCompareWhenEvaluator.paramCheck(parameters);
+    return new GenericUDAFCompareWhenEvaluator(GenericUDAFCompareWhenEvaluator.Order.MAX);
+  }
 
 }
